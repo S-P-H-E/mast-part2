@@ -1,33 +1,160 @@
-import { Text, TextInput, View } from "react-native"
-import { Image } from 'expo-image';
-import { Link } from "expo-router";
-import { IoArrowForwardOutline } from "react-icons/io5";
+import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from "react-native"
+import { Image } from "react-native"
+import { useRouter } from "expo-router"
+import { LinearGradient } from "expo-linear-gradient"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
 import { create } from 'zustand'
-import { useState } from "react";
+import { combine } from 'zustand/middleware'
+
+// Zustand store for username state
+export const useUserStore = create(
+  combine({ username: '' }, (set) => ({
+    setUsername: (username: string) => set({ username }),
+  })),
+)
 
 export default function Login() {
-  const [username, setUsername] = useState('')
+  const router = useRouter()
+  const [localUsername, setLocalUsername] = useState('')
+  const { setUsername } = useUserStore()
+
+  // Separate function for handling navigation
+  const handleContinue = () => {
+    if (!localUsername.trim()) {
+      if (Platform.OS === 'android') {
+        // For Android, use ToastAndroid
+        // @ts-ignore
+        import('react-native').then(({ ToastAndroid }) => {
+          ToastAndroid.show('Please enter a username.', ToastAndroid.SHORT);
+        });
+      } else {
+        // For iOS and others, use alert
+        alert('Please enter a username.');
+      }
+      return;
+    }
+    setUsername(localUsername) // Update Zustand store with username
+    router.push('/home')
+  }
 
   return (
-    <View className="bg-black flex-1 items-center">
-      <View className="flex-1 justify-end items-center z-20 bg-transparent px-10 pb-10 w-full max-w-lg">
-        <View className="flex flex-col mb-7 items-center">
-          <Text className="text-white font-semibold text-4xl">Get Started</Text>
-          <Text className="text-[var(--description)] text-lg">Enter your username</Text>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <StatusBar style="light"/>
+
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Get Started</Text>
+          <Text style={styles.subtitle}>Enter your username</Text>
         </View>
 
-        <TextInput onChangeText={setUsername} value={username} placeholderTextColor={"#969696"} placeholder="Enter your username" style={{ backgroundColor: '#262626' }} className="rounded-xl h-fit w-full px-6 py-3 mb-7"/>
+        <TextInput 
+          onChangeText={setLocalUsername} 
+          value={localUsername} 
+          placeholderTextColor="#969696" 
+          placeholder="Enter your username" 
+          style={styles.textInput}
+        />
 
-        <Link href={"/"} className="bg-white text-black px-6 py-3 rounded-xl flex gap-1 justify-center items-center font-semibold w-full mb-6">
-          Continue
-          {/* <IoArrowForwardOutline className="translate-y-[0.5px]"/> */}
-        </Link>
-        <Text style={{ fontSize: 10 }} className="text-[var(--description)]">By continuing you agree to the{' '}<Text className="text-white font-semibold">terms and conditions</Text></Text>
+        <Pressable onPress={handleContinue} style={styles.button}>
+          <Text style={styles.buttonText}>Continue</Text>
+        </Pressable>
+
+        <Text style={styles.termsText}>By continuing you agree to the{' '}<Text style={styles.termsLink}>terms and conditions</Text></Text>
       </View>
 
-      <View className="bg-gradient-to-t from-20% from-black to-transparent flex-1 size-full z-10 absolute"/>
+      {/* Top Gradient */}
+      <LinearGradient colors={["transparent", "black"]} start={{ x: 0.5, y: 0.9 }} end={{ x: 0.5, y: 0 }} style={styles.gradientTop} />
+      {/* Bottom Gradient */}
+      <LinearGradient colors={["black", "transparent"]} start={{ x: 0.5, y: 0.6 }} end={{ x: 0.5, y: 0 }} style={styles.gradient} />
 
-      <Image source={require('../../assets/images/02.jpg')} className="absolute size-full"  style={{ transform: [{ translateY: -200 }] }}/>
-    </View>
+      <Image source={require('@/assets/images/02.jpg')} style={styles.backgroundImage} />
+    </KeyboardAvoidingView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "black",
+    alignItems: "center",
+  },
+  content: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    zIndex: 20,
+    backgroundColor: "transparent",
+    paddingHorizontal: 40,
+    paddingBottom: 64,
+    width: "100%",
+    maxWidth: 500,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 28,
+  },
+  title: {
+    color: "white",
+    fontSize: 36,
+    fontWeight: "600",
+  },
+  subtitle: {
+    color: "#818181",
+    fontSize: 18,
+  },
+  textInput: {
+    backgroundColor: "#262626",
+    borderRadius: 18,
+    paddingHorizontal: 24,
+    paddingVertical: 18,
+    width: "100%",
+    marginBottom: 12,
+    color: "white",
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: "white",
+    borderRadius: 18,
+    paddingVertical: 18,
+    width: "100%",
+    marginBottom: 24,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: "black",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  termsText: {
+    fontSize: 10,
+    color: "#818181",
+    textAlign: "center",
+  },
+  termsLink: {
+    color: "white",
+    fontWeight: "600",
+  },
+  gradient: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 10,
+  },
+  gradientTop: {
+    position: "absolute",
+    width: "100%",
+    height: "20%",
+    zIndex: 10,
+  },
+  backgroundImage: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    transform: [{ translateY: -200 }],
+  },
+})

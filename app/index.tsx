@@ -1,12 +1,14 @@
-import { Text, View, Image, StyleSheet } from "react-native";
-import { Link } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
-import { StatusBar } from "expo-status-bar";
+import { Text, View, Image, StyleSheet, Pressable } from "react-native"
+import { useRouter } from "expo-router"
+import { LinearGradient } from "expo-linear-gradient"
+import { StatusBar } from "expo-status-bar"
 
 export default function Index() {
+  const router = useRouter()
+  
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="light"/>
 
       <View style={styles.content}>
         <View style={styles.header}>
@@ -14,11 +16,14 @@ export default function Index() {
           <Text style={styles.subtitle}>Fresh food delivered.</Text>
         </View>
 
-        <Link href="/login" style={styles.button}>
+        <Pressable onPress={() => router.push('/login')} style={styles.button}>
           <Text style={styles.buttonText}>Continue</Text>
-        </Link>
+        </Pressable>
       </View>
 
+      {/* Top Gradient */}
+      <LinearGradient colors={["transparent", "black"]} start={{ x: 0.5, y: 0.9 }} end={{ x: 0.5, y: 0 }} style={styles.gradientTop} />
+      {/* Bottom Gradient */}
       <LinearGradient colors={["black", "transparent"]} start={{ x: 0.5, y: 0.9 }} end={{ x: 0.5, y: 0 }} style={styles.gradient} />
 
       <Image source={require('@/assets/images/01.jpg')} style={styles.backgroundImage} />
@@ -49,22 +54,22 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "white",
-    fontSize: 32,
+    fontSize: 48,
     fontWeight: "600",
   },
   subtitle: {
     color: "#818181",
-    fontSize: 18,
+    fontSize: 22,
   },
   button: {
     backgroundColor: "white",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    borderRadius: 18,
+    paddingVertical: 18,
     width: "100%",
-    alignItems: "center",
   },
   buttonText: {
+    margin: 'auto',
+    textAlign: 'center',
     color: "black",
     fontWeight: "600",
     fontSize: 16,
@@ -73,6 +78,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
+    zIndex: 10,
+  },
+  gradientTop: {
+    position: "absolute",
+    width: "100%",
+    height: "20%",
     zIndex: 10,
   },
   backgroundImage: {
