@@ -1,10 +1,83 @@
-import { Text, View } from "react-native"
+import { Text, View, Image, StyleSheet } from "react-native";
+import { Link } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 
 export default function Index() {
   return (
-    <View className="flex-1 gap-1 justify-center items-center bg-black">
-      <Text className="text-white font-semibold text-2xl">Empty Expo Template By Sphe.</Text>
-      <Text className="text-[var(--description)] font-semibold text-lg">(With Nativewind / TailwindCSS)</Text>
+    <View style={styles.container}>
+      <StatusBar style="light" />
+
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Christoffel's</Text>
+          <Text style={styles.subtitle}>Fresh food delivered.</Text>
+        </View>
+
+        <Link href="/login" style={styles.button}>
+          <Text style={styles.buttonText}>Continue</Text>
+        </Link>
+      </View>
+
+      <LinearGradient colors={["black", "transparent"]} start={{ x: 0.5, y: 0.9 }} end={{ x: 0.5, y: 0 }} style={styles.gradient} />
+
+      <Image source={require('@/assets/images/01.jpg')} style={styles.backgroundImage} />
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "black",
+    alignItems: "center",
+  },
+  content: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    zIndex: 20,
+    backgroundColor: "transparent",
+    paddingHorizontal: 40,
+    paddingBottom: 64,
+    width: "100%",
+    maxWidth: 500,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 28,
+  },
+  title: {
+    color: "white",
+    fontSize: 32,
+    fontWeight: "600",
+  },
+  subtitle: {
+    color: "#818181",
+    fontSize: 18,
+  },
+  button: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    width: "100%",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "black",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  gradient: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    zIndex: 10,
+  },
+  backgroundImage: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+});
